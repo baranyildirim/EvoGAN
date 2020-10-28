@@ -1,4 +1,5 @@
 from parameters import Parameters
+from generator import Generator
 
 class DNA:
     def __init__(self, parameters: Parameters):

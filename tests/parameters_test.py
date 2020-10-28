@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
-import sys
-sys.path.insert(0, '..')
-
-from parameters import Parameters
+from model.parameters import Parameters
 import unittest
 
 class TestParameters(unittest.TestCase):
@@ -13,5 +10,3 @@ class TestParameters(unittest.TestCase):
         self.assertEqual(actual, expected)
 
 
-if __name__ == '__main__':
-    unittest.main()
