@@ -1,5 +1,5 @@
 from torch import nn, tensor
-from parameters import Parameters
+from .parameters import Parameters
 
 class Generator(nn.Module):
     def __init__(self, param: Parameters):

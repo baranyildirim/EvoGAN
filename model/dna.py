@@ -1,5 +1,5 @@
-from parameters import Parameters
-from generator import Generator
+from .parameters import Parameters
+from .generator import Generator
 
 class DNA:
     def __init__(self, parameters: Parameters):
@@ -8,6 +8,8 @@ class DNA:
 
     def serialize(self, Parameters) -> int:
         return self.parameters.serialize()
+
+    def gen_random(self):
 
     def mutate(self):
         pass
