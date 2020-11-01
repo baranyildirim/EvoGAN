@@ -21,7 +21,6 @@ def generate_new_dna(n_dna, dna_length, p_dists=None):
 # train GAN and
 # return Inception score
 def score_dna(dna):
-
     # This is the target dna
     target_dna = np.array([1, 0, 0, 1, 0])
 

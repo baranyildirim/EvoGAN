@@ -1,5 +1,5 @@
 from torch import nn, tensor
-from .parameters import Parameters
+from parameters import Parameters
 
 class Discriminator(nn.Module):
     def __init__(self):

@@ -1,5 +1,6 @@
 from torch import nn, tensor
-from .parameters import Parameters
+from parameters import Parameters
+
 
 class Generator(nn.Module):
     def __init__(self, param: Parameters):
@@ -9,5 +10,5 @@ class Generator(nn.Module):
     def set_arch(self, param: Parameters) -> None:
         return
 
-    def forward(self, x: tensor ) -> tensor:
+    def forward(self, x: tensor) -> tensor:
         return
