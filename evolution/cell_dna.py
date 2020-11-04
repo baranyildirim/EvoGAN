@@ -4,7 +4,7 @@ from typing import Type, TypeVar, List, Callable, Any, Sequence, Tuple
 from random import choice, uniform
 import numpy as np  
 
-D = TypeVar('D', bound='DNA')
+D = TypeVar('D', bound='CellDNA')
 
 @dataclass
 class DNAProperties:
@@ -13,10 +13,7 @@ class DNAProperties:
     mutation_probability_func = uniform
     mutation_probability_args : Tuple = (0, 1)
 
-class DNAParameters(Parameters):
-    
-
-class DNA:
+class CellDNA:
     def __init__(self, parameters: Parameters, properties: DNAProperties = DNAProperties()):
         self.parameters = parameters
         self.properties = properties
@@ -31,8 +28,8 @@ class DNA:
         return repr(self.parameters.to_dict())
 
     @classmethod
-    def gen_random(cls:D, prop: DNAProperties = DNAProperties()) -> D:
-        return DNA(Parameters.gen_random(choice_func=prop.choice_func))
+    def gen_random(cls:D, params: Type[Parameters], prop: DNAProperties = DNAProperties()) -> D:
+        return CellDNA(params.gen_random(choice_func=prop.choice_func))
 
     def serialize(self) -> List[int]:
         return self.parameters.serialize()
