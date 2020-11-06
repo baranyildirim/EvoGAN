@@ -1,9 +1,9 @@
-from enum import Enum
+from enum import Enum, IntEnum, IntFlag
 from dataclasses import dataclass, astuple, fields, asdict
 from typing import Type, TypeVar, List, Any
 from random import choice
 
-class Skip(Enum):
+class Skip(IntFlag):
     NO_SKIP_CONNECTION = 0
     SKIP_CONNECTION = 1
 
@@ -35,6 +35,7 @@ class Parameters:
         params = []
         for f in field_list:
             param_choice = choice_func(list(f.type.__members__))
+            param_choice = f.type[param_choice]
             params.append(param_choice)
         return cls.from_serial(params)
             
@@ -55,7 +56,10 @@ class Parameters:
 
     def serialize(self) -> List[int]:
         values = astuple(self)
-        return list(values)
+        values = list(values)
+        for idx, v in enumerate(values):
+            values[idx] = v.value
+        return values
 
     def to_dict(self) -> dict:
         values = asdict(self)
@@ -82,6 +86,13 @@ class ThirdCellParameters(Parameters):
     normalization : Normalization
     upsample: Upsample
     shortcut : Shortcut 
-    skip_from_1 : Skip 
-    skip_from_2 : Skip
+    skip_from_1: Skip
+    skip_from_2: Skip
+
+    # Merge skips while serializing
+    def serialize(self) -> List[int]:
+        values = Parameters.serialize(self)[:self.parameter_count() - 2]
+        merged_skip = int(str(self.skip_from_1.value) + str(self.skip_from_2.value))
+        values.append(merged_skip)
+        return values
 

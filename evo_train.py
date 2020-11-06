@@ -1,21 +1,14 @@
 #!/usr/bin/env python3
 import numpy as np
+from typing import List
+from evolution.dna import DNA
 
 
-def generate_new_dna(n_dna, dna_length, p_dists=None):
-
-    if p_dists is None:
-        # Make distributions uniform
-        p_dists = 0.5 * np.ones((dna_length, 2))
-
+def generate_new_dna(n_dna: int) -> List[DNA]:
     dna_list = []
-
-    for i in range(dna_length):
-
-        dna = np.random.choice([0, 1], size=(n_dna, 1), p=p_dists[i])
-        dna_list.append(dna)
-
-    return np.concatenate(dna_list, axis=1)
+    for i in range(n_dna):
+        dna_list.append(DNA.gen_random().serialize())
+    return dna_list
 
 # This will create GAN from dna
 # train GAN and
@@ -55,7 +48,7 @@ def generation_step(dna, scores, mut_prob=0):
         p_dist[n, 1] = p1
 
     print(p_dist)
-    dna = generate_new_dna(n_dna, dna_length, p_dist)
+    dna = generate_new_dna(n_dna)
 
     # Mutation
     mutation = np.random.choice([0, 1], size=dna.shape, p=[1-mut_prob, mut_prob])
