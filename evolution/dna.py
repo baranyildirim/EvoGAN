@@ -1,5 +1,5 @@
-from parameters import Parameters, FirstCellParameters, SecondCellParameters, ThirdCellParameters
-from cell_dna import DNAProperties, CellDNA
+from .parameters import Parameters, FirstCellParameters, SecondCellParameters, ThirdCellParameters
+from .cell_dna import DNAProperties, CellDNA
 from dataclasses import dataclass, astuple, fields, asdict
 from typing import Type, TypeVar, List, Callable, Any, Sequence, Tuple
 from random import choice, uniform
@@ -56,7 +56,4 @@ class DNA:
                 evolution_matrix[position:param_count]
             )
             position = param_count
-        return
-
-    def to_arch(self):
         return

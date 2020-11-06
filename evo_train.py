@@ -2,12 +2,12 @@
 import numpy as np
 from typing import List
 from evolution.dna import DNA
+from evolution.cell_dna import DNAProperties
 
-
-def generate_new_dna(n_dna: int) -> List[DNA]:
+def generate_new_dna(n_dna:int, properties: DNAProperties) -> List[DNA]:
     dna_list = []
     for i in range(n_dna):
-        dna_list.append(DNA.gen_random().serialize())
+        dna_list.append(DNA.gen_random())
     return dna_list
 
 # This will create GAN from dna
@@ -29,7 +29,7 @@ def score_dna(dna):
     return rewards
 
 
-def generation_step(dna, scores, mut_prob=0):
+def generation_step(dna, scores, properties: DNAProperties):
 
     n_dna, dna_length = dna.shape
 
@@ -48,32 +48,29 @@ def generation_step(dna, scores, mut_prob=0):
         p_dist[n, 1] = p1
 
     print(p_dist)
-    dna = generate_new_dna(n_dna)
+    dna = generate_new_dna(n_dna, properties)
 
     # Mutation
-    mutation = np.random.choice([0, 1], size=dna.shape, p=[1-mut_prob, mut_prob])
-    dna = 1 * np.logical_xor(dna, mutation)
 
     return dna
 
 
 def main():
     # Initialize dna uniformly
-    dna = generate_new_dna(10, 5)
-
+    dna = generate_new_dna(10)
 
     # Initialize mutation probability
-    mut_prob = 0.05
+    properties = DNAProperties(mutation_probability=0.05)
 
     n_epochs = 20
 
     for epoch in range(n_epochs):
         rewards = score_dna(dna)
         print(dna, rewards)
-        dna = generation_step(dna, rewards, mut_prob)
+        dna = generation_step(dna, rewards, properties)
 
         if epoch % 2 == 0:
-            mut_prob /= 2
+            properties.mutation_probability /= 2
 
 
 if __name__ == "__main__":

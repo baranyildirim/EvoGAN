@@ -28,8 +28,7 @@ torch.backends.cudnn.enabled = True
 torch.backends.cudnn.benchmark = True
 
 
-def main():
-    args = cfg.parse_args()
+def train_derived(args):
     torch.cuda.manual_seed(args.random_seed)
 
     # set tf env
