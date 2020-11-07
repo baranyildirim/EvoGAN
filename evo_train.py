@@ -85,7 +85,7 @@ def generate_evolution_matrix(dna_list: List[DNA], scores: List[int]) -> List[Li
 def main():
     # Initialize mutation probability
     mut_prob = 0.05
-    properties = DNAProperties(mutation_probability=0.05)
+    properties = DNAProperties(mutation_probability=mut_prob)
 
     # Initialize dna uniformly
     dna_list = generate_new_dna(10, properties)

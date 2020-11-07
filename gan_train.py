@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 from typing import List
 from AutoGAN.train_derived import train_derived
 
