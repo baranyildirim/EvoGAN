@@ -129,6 +129,8 @@ def train_derived(args):
     }
 
     # train loop
+    score = 0
+
     for epoch in tqdm(range(int(start_epoch), int(args.max_epoch)), desc='total progress'):
         lr_schedulers = (gen_scheduler, dis_scheduler) if args.lr_decay else None
         train(args, gen_net, dis_net, gen_optimizer, dis_optimizer, gen_avg_param, train_loader, epoch, writer_dict,
@@ -138,6 +140,7 @@ def train_derived(args):
             backup_param = copy_params(gen_net)
             load_params(gen_net, gen_avg_param)
             inception_score, fid_score = validate(args, fixed_z, fid_stat, gen_net, writer_dict)
+            score = inception_score
             logger.info(f'Inception score: {inception_score}, FID score: {fid_score} || @ epoch {epoch}.')
             load_params(gen_net, backup_param)
             if fid_score < best_fid:
@@ -163,7 +166,8 @@ def train_derived(args):
             'path_helper': args.path_helper
         }, is_best, args.path_helper['ckpt_path'])
         del avg_gen_net
-
+        
+    return score
 
 if __name__ == '__main__':
     main()

@@ -3,6 +3,7 @@ import numpy as np
 from typing import List
 from evolution.dna import DNA
 from evolution.cell_dna import DNAProperties
+from gan_train import train_gan
 
 def generate_new_dna(n_dna:int, properties: DNAProperties) -> List[DNA]:
     dna_list = []
@@ -10,34 +11,18 @@ def generate_new_dna(n_dna:int, properties: DNAProperties) -> List[DNA]:
         dna_list.append(DNA.gen_random())
     return dna_list
 
-
-target_dna = DNA.gen_random()
-print(f"Target DNA: {target_dna.serialize()}")
-
 def output_dna(dna_list: List[DNA]) -> None:
+    """ Print serialized form of a list of DNAs """
     for d in dna_list:
         print(d.serialize())
 
 def score_dna(dna: DNA) -> float:
     """ Create a GAN using the DNA,
-        train the GAN and return the inception score
+        train the GAN and return the inception score.
+        Training uses train_derived from AutoGAN
     """
-    # This is the target dna
-    target = np.array(target_dna.serialize())
-    actual = np.array(dna.serialize())
-    # This is the reward for matching each position
-    reward_dict = np.array([
-        3.0, 8.0, 4.0, 2.0, 5.0, 
-        2.0, 1.0, 5.0, 2.0, 1.0,
-        3.0, 8.0, 4.0, 2.0, 1.0
-    ])
-
-    # Find matches between dna and target dna
-    matches = 1 * (actual == target)
-
-    # Compute rewards for dna
-    rewards = np.sum(matches * reward_dict)
-    return rewards
+    reward = train_gan(to_arch(dna), max_epoch=1)
+    return reward
 
 def scoring_step(dna_list: List[DNA]) -> List[float]:
     """ Score each DNA """
