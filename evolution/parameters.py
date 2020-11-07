@@ -3,10 +3,6 @@ from dataclasses import dataclass, astuple, fields, asdict
 from typing import Type, TypeVar, List, Any
 from random import choice
 
-class Skip(IntEnum):
-    NO_SKIP_CONNECTION = 0
-    SKIP_CONNECTION = 1
-
 class ConvolutionBlock(IntEnum):
     PRE_ACTIVATION = 0
     POST_ACTIVATION = 1
@@ -24,6 +20,10 @@ class Upsample(IntEnum):
 class Shortcut(IntEnum):
     NO_SHORTCUT = 0
     SHORTCUT = 1
+
+class Skip(IntEnum):
+    NO_SKIP_CONNECTION = 0
+    SKIP_CONNECTION = 1
 
 P = TypeVar('P', bound='Parameters')
 
@@ -99,25 +99,3 @@ class ThirdCellParameters(Parameters):
     shortcut : Shortcut 
     skip_from_1: Skip
     skip_from_2: Skip
-
-    # Merge skips while serializing
-    def serialize(self) -> List[int]:
-        values = Parameters.serialize(self)[:self.parameter_count() - 2]
-        merged_skip = int(str(self.skip_from_1.value) + str(self.skip_from_2.value))
-        values.append(merged_skip)
-        return values
-
-    # Unmerge skips while de-serializing
-    @classmethod
-    def from_serial(cls: Type[P], s: List[int]) -> P:
-        merged_skip = s[-1]
-        param = s.copy()[:cls.parameter_count() - 2]
-        if merged_skip == 0:
-            param.extend([0, 0])
-        if merged_skip == 1:
-            param.extend([0, 1])
-        if merged_skip == 11:
-            param.extend([1, 1])
-        if merged_skip == 10:
-            param.extend([1, 0])
-        return super().from_serial(param)

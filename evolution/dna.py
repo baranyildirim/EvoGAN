@@ -51,9 +51,9 @@ class DNA:
     def evolve(self, evolution_matrix: List[List[float]]):
         position = 0
         for c in self.cells:
-            param_count = len(c.serialize())
+            param_count = c.parameters.parameter_count()
             c.evolve(
-                evolution_matrix[position:param_count]
+                evolution_matrix[position:(position+param_count)]
             )
-            position = param_count
+            position += param_count
         return
