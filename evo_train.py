@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+
+import os
+import sys
+
+sys.path.append(os.path.join(os.getcwd(), 'AutoGAN'))
+
 import numpy as np
 from typing import List
 from evolution.dna import DNA

@@ -1,5 +1,6 @@
 from typing import List
 from AutoGAN.train_derived import train_derived
+from munch import Munch
 
 args = dict([
     ("gen_bs", 128),
@@ -23,9 +24,11 @@ args = dict([
     ("n_critic", 5),
     ("val_freq", 20),
     ("exp_name", "derive"),
+    ("random_seed", 12345),
+    ("")
 ])
 
 def train_gan(arch: List[int], max_epoch: int) -> float:
     args["arch"] = arch
     args["max_epoch"] = max_epoch
-    return train_derived(args)
+    return train_derived(Munch(args))

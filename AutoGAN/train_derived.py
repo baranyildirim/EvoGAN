@@ -8,7 +8,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import cfg
+from . import cfg
 import models_search
 import datasets
 from functions import train, validate, LinearLrDecay, load_params, copy_params
