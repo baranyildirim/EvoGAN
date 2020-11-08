@@ -16,7 +16,7 @@ def str2bool(v):
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
 
-def parse_args():
+def parse_args(args=None, namespace=None):
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '--max_epoch',
@@ -195,6 +195,6 @@ def parse_args():
     parser.add_argument('--arch', nargs='+', type=int,
                         help='the vector of a discovered architecture')
 
-    opt = parser.parse_args()
+    opt = parser.parse_args(args=args, namespace=namespace)
 
     return opt

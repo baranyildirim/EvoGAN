@@ -43,7 +43,6 @@ class CellDNA:
             possible_choices.remove(p.value)
             if (rand < self.properties.mutation_probability):
                 new_parameters[k] = self.properties.choice_func(possible_choices)
-
         new_parameters = list(new_parameters.values())
         self.parameters = self.parameters.from_serial(new_parameters)
         self._append_history()
