@@ -1,7 +1,7 @@
 from typing import List
 from AutoGAN.train_derived import train_derived
-#from munch import Munch
 import AutoGAN.cfg
+
 
 args = dict([
     ("-gen_bs", 128),
@@ -30,5 +30,8 @@ args = dict([
 def train_gan(arch: List[int], max_epoch: int) -> float:
     args["--arch"] = arch
     args["--max_epoch"] = max_epoch
-    args_string = ", ".join(f'{x[0]}={x[1]!r}' for x in args.items())
-    return train_derived(AutoGAN.cfg.parse_args(args=args_string))   
+    args_list = []
+    for k, v in args.items():
+        args_list.extend([k, v])
+    print(args_list)
+    return train_derived(AutoGAN.cfg.parse_args(args=args_list))   
