@@ -27,13 +27,14 @@ def score_dna(dna: DNA) -> float:
         train the GAN and return the inception score.
         Training uses train_derived from AutoGAN
     """
-    reward = train_gan(to_arch(dna), max_epoch=1)
+    reward = train_gan(to_arch(dna), 1)
     return reward
 
 def scoring_step(dna_list: List[DNA]) -> List[float]:
     """ Score each DNA """
     scores = []
     for d in dna_list:
+        print(to_arch(d))
         scores.append(score_dna(d))
     return scores
 

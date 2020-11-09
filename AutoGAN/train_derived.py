@@ -83,9 +83,9 @@ def train_derived(args):
     assert os.path.exists(fid_stat)
 
     # epoch number for dis_net
-    args.max_epoch = args.max_epoch * args.n_critic
-    if args.max_iter:
-        args.max_epoch = np.ceil(args.max_iter * args.n_critic / len(train_loader))
+    # args.max_epoch = args.max_epoch * args.n_critic
+    #if args.max_iter:
+    #    args.max_epoch = np.ceil(args.max_iter * args.n_critic / len(train_loader))
 
     # initial
     fixed_z = torch.cuda.FloatTensor(np.random.normal(0, 1, (25, args.latent_dim)))
