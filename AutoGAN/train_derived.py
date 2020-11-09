@@ -8,7 +8,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from . import models_search
+from .models_search.shared_gan import Generator, Discriminator
 from . import datasets
 from .functions import train, validate, LinearLrDecay, load_params, copy_params
 from .utils.utils import set_log_dir, save_checkpoint, create_logger
@@ -36,8 +36,8 @@ def train_derived(args):
     create_inception_graph(inception_path)
 
     # import network
-    gen_net = eval('models_search.'+args.gen_model+'.Generator')(args=args).cuda()
-    dis_net = eval('models_search.'+args.dis_model+'.Discriminator')(args=args).cuda()
+    gen_net = Generator(args=args).cuda()
+    dis_net = Discriminator(args=args).cuda()
 
     gen_net.set_arch(args.arch, cur_stage=2)
     dis_net.cur_stage = 2

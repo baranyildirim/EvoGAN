@@ -28,10 +28,13 @@ args = dict([
 ])
 
 def train_gan(arch: List[int], max_epoch: int) -> float:
-    args["--arch"] = arch
+    #args["--arch"] = " ".join(list(map(str, arch)))
     args["--max_epoch"] = max_epoch
     args_list = []
     for k, v in args.items():
-        args_list.extend([k, v])
-    print(args_list)
+        args_list.extend([k, str(v)])
+    args_list.append("--arch")
+    for item in arch:
+        args_list.append(str(item))
+
     return train_derived(AutoGAN.cfg.parse_args(args=args_list))   
