@@ -16,8 +16,8 @@ from imageio import imsave
 from torchvision.utils import make_grid
 from tqdm import tqdm
 
-from utils.fid_score import calculate_fid_given_paths
-from utils.inception_score import get_inception_score
+from .utils.fid_score import calculate_fid_given_paths
+from .utils.inception_score import get_inception_score
 
 logger = logging.getLogger(__name__)
 
