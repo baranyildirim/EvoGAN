@@ -15,6 +15,7 @@ from .utils.utils import set_log_dir, save_checkpoint, create_logger
 from .utils.inception_score import _init_inception
 from .utils.fid_score import create_inception_graph, check_or_download_inception
 
+import warnings
 import torch
 import os
 import numpy as np
@@ -28,6 +29,11 @@ torch.backends.cudnn.benchmark = True
 
 
 def train_derived(args):
+
+    if (args.warnings_enabled == False):
+        warnings.filterwarnings("ignore")
+
+
     torch.cuda.manual_seed(args.random_seed)
 
     # set tf env

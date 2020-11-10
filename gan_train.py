@@ -25,7 +25,8 @@ args = dict([
     ("--n_critic", 5),
     ("--val_freq", 20),
     ("--exp_name", "derive"),
-    ("--calc_fid", False)
+    ("--calc_fid", False),
+    ("--warnings_enabled", False)
 ])
 
 def train_gan(arch: List[int], max_epoch: int) -> float:

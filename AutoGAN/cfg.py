@@ -192,14 +192,20 @@ def parse_args(args=None, namespace=None):
                         help='var threshold')
     parser.add_argument('--dynamic_reset_window', type=int, default=500,
                         help='the window size')
-    parser.add_argument('--arch', nargs='+', type=int,
-                        help='the vector of a discovered architecture')
-
     parser.add_argument(
         '--calc_fid',
         type=str2bool,
         default=False,
         help='Calculate fidelity score')
+
+    parser.add_argument(
+        '--warnings_enabled',
+        type=str2bool,
+        default=True,
+        help='Whether or not warnings are displayed')
+
+    parser.add_argument('--arch', nargs='+', type=int,
+                    help='the vector of a discovered architecture')
 
     opt = parser.parse_args(args=args, namespace=namespace)
 
