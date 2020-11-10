@@ -3,13 +3,31 @@
 import os
 import sys
 
-sys.path.append(os.path.join(os.getcwd(), 'AutoGAN'))
-
 import numpy as np
+import logging
+
 from typing import List
 from evolution.dna import DNA
 from evolution.cell_dna import DNAProperties
 from gan_train import train_gan
+
+evo_train_logger = None
+def init_logger():
+    evo_train_logger = logging.getLogger("evo_train")
+    evo_train_logger.setLevel(logging.INFO)
+    fh = logging.FileHandler('evo_train.log')
+    fh.setLevel(logging.INFO)
+    # create console handler with a higher log level
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.INFO)
+    # create formatter and add it to the handlers
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    fh.setFormatter(formatter)
+    ch.setFormatter(formatter)
+    # add the handlers to the logger
+    evo_train_logger.addHandler(fh)
+    evo_train_logger.addHandler(ch)
+
 
 def generate_new_dna(n_dna:int, properties: DNAProperties) -> List[DNA]:
     dna_list = []
@@ -24,6 +42,7 @@ def output_dna(dna_list: List[DNA], scores:List[float]) -> None:
     assert(len(dna_list) == len(scores))
     for idx, d in enumerate(dna_list):
         print(f"{d.serialize()} : {scores[idx]}")
+        evo_train_logger.info(f"{d.serialize()} : {scores[idx]}")
 
 def score_dna(dna: DNA) -> float:
     """ Create a GAN using the DNA,
@@ -104,6 +123,7 @@ def main():
     for epoch in range(n_epochs):
         properties = DNAProperties(mutation_probability=mut_prob)
         print(f"\n EPOCH: {epoch}\n")
+        evo_train_logger.info(f"\n EPOCH: {epoch}\n")
         inception_scores = scoring_step(dna_list)
         output_dna(dna_list, inception_scores)
 
@@ -116,6 +136,7 @@ def main():
     final_scores = scoring_step(final_dna_list)
 
     print("\n FINAL: \n")
+    evo_train_logger.info("\n FINAL: \n")
     output_dna(final_dna_list, final_scores)
     
 
