@@ -68,7 +68,7 @@ def scoring_step(dna_list: List[DNA]) -> List[float]:
     scores = []
     for d_idx in range(0, len(dna_list) // num_processes, num_processes):
         d_args = dna_list[d_idx * num_processes:d_idx * num_processes + num_processes]
-        curr_scores = [pool.apply(score_dna, args=d_elem) for d_elem in d_args]
+        curr_scores = [pool.apply(score_dna, args=(d_elem)) for d_elem in d_args]
         scores.extend(curr_scores)
 
     pool.close()  
