@@ -308,10 +308,11 @@ def validate(args, fixed_z, fid_stat, gen_net: nn.Module, writer_dict, clean_dir
         fid_score = calculate_fid_given_paths([fid_buffer_dir, fid_stat], inception_path=None)
         print(f"FID score: {fid_score}")
 
-    if clean_dir:
-        os.system('rm -r {}'.format(fid_buffer_dir))
-    else:
-        logger.info(f'=> sampled images are saved to {fid_buffer_dir}')
+    if (args.calc_fid):
+        if clean_dir:
+            os.system('rm -r {}'.format(fid_buffer_dir))
+        else:
+            logger.info(f'=> sampled images are saved to {fid_buffer_dir}')
 
     writer.add_image('sampled_images', img_grid, global_steps)
     writer.add_scalar('Inception_score/mean', mean, global_steps)
