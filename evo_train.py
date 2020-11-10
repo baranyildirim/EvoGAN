@@ -67,7 +67,8 @@ def scoring_step(dna_list: List[DNA]) -> List[float]:
     scores = []
     for d_idx in range(0, len(dna_list) // num_processes, num_processes):
         d_args = dna_list[d_idx * num_processes:d_idx * num_processes + num_processes]
-        curr_scores = [pool.apply(score_dna, args=(d_elem)) for d_elem in d_args]
+        curr_scores = [pool.apply(score_dna, args=tuple([d_elem])) for d_elem in d_args]
+        pool.join()
         scores.extend(curr_scores)
 
     pool.close()  
@@ -154,5 +155,6 @@ def main():
     
 
 if __name__ == "__main__":
+    mp.set_start_method('spawn')
     init_logger()
     main()
