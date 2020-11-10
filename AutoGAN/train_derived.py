@@ -82,6 +82,8 @@ def train_derived(args):
         else:
             raise NotImplementedError(f'no fid stat for {args.dataset.lower()}')
         assert os.path.exists(fid_stat)
+    else:
+        fid_stat = None
 
     # epoch number for dis_net
     # args.max_epoch = args.max_epoch * args.n_critic
