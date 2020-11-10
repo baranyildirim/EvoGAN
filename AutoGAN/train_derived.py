@@ -74,13 +74,14 @@ def train_derived(args):
     train_loader = dataset.train
 
     # fid stat
-    if args.dataset.lower() == 'cifar10':
-        fid_stat = 'fid_stat/fid_stats_cifar10_train.npz'
-    elif args.dataset.lower() == 'stl10':
-        fid_stat = 'fid_stat/stl10_train_unlabeled_fid_stats_48.npz'
-    else:
-        raise NotImplementedError(f'no fid stat for {args.dataset.lower()}')
-    assert os.path.exists(fid_stat)
+    if (args.calc_fid):
+        if args.dataset.lower() == 'cifar10':
+            fid_stat = 'evogan-env/fid_stat/fid_stats_cifar10_train.npz'
+        elif args.dataset.lower() == 'stl10':
+            fid_stat = 'evogan-env/fid_stat/stl10_train_unlabeled_fid_stats_48.npz'
+        else:
+            raise NotImplementedError(f'no fid stat for {args.dataset.lower()}')
+        assert os.path.exists(fid_stat)
 
     # epoch number for dis_net
     # args.max_epoch = args.max_epoch * args.n_critic
@@ -91,8 +92,11 @@ def train_derived(args):
     fixed_z = torch.cuda.FloatTensor(np.random.normal(0, 1, (25, args.latent_dim)))
     gen_avg_param = copy_params(gen_net)
     start_epoch = 0
-    best_fid = 1e4
+    best_inception = 0
 
+    if args.calc_fid:
+        best_fid = 1e4
+    
     # set writer
     if args.load_path:
         print(f'=> resuming from {args.load_path}')
@@ -101,7 +105,9 @@ def train_derived(args):
         assert os.path.exists(checkpoint_file)
         checkpoint = torch.load(checkpoint_file)
         start_epoch = checkpoint['epoch']
-        best_fid = checkpoint['best_fid']
+        if args.calc_fid:
+            best_fid = checkpoint['best_fid']
+        best_inception = checkpoint['best_inception']
         gen_net.load_state_dict(checkpoint['gen_state_dict'])
         dis_net.load_state_dict(checkpoint['dis_state_dict'])
         gen_optimizer.load_state_dict(checkpoint['gen_optimizer'])
@@ -128,8 +134,6 @@ def train_derived(args):
     }
 
     # train loop
-    score = 0
-
     for epoch in tqdm(range(int(start_epoch), int(args.max_epoch)), desc='total progress'):
         lr_schedulers = (gen_scheduler, dis_scheduler) if args.lr_decay else None
         train(args, gen_net, dis_net, gen_optimizer, dis_optimizer, gen_avg_param, train_loader, epoch, writer_dict,
@@ -139,14 +143,20 @@ def train_derived(args):
             backup_param = copy_params(gen_net)
             load_params(gen_net, gen_avg_param)
             inception_score, fid_score = validate(args, fixed_z, fid_stat, gen_net, writer_dict)
-            score = inception_score
             logger.info(f'Inception score: {inception_score}, FID score: {fid_score} || @ epoch {epoch}.')
             load_params(gen_net, backup_param)
-            if fid_score < best_fid:
-                best_fid = fid_score
-                is_best = True
+            if (args.calc_fid):
+                if fid_score < best_fid:
+                    best_fid = fid_score
+                    is_best = True
+                else:
+                    is_best = False
             else:
-                is_best = False
+                if inception_score > best_inception:
+                    best_inception = inception_score
+                    is_best = True
+                else:
+                    is_best = False   
         else:
             is_best = False
 
@@ -162,9 +172,10 @@ def train_derived(args):
             'gen_optimizer': gen_optimizer.state_dict(),
             'dis_optimizer': dis_optimizer.state_dict(),
             'best_fid': best_fid,
+            'best_inception': best_inception,
             'path_helper': args.path_helper
         }, is_best, args.path_helper['ckpt_path'])
         del avg_gen_net
         
-    return score
+    return best_inception
 

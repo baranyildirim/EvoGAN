@@ -195,6 +195,12 @@ def parse_args(args=None, namespace=None):
     parser.add_argument('--arch', nargs='+', type=int,
                         help='the vector of a discovered architecture')
 
+    parser.add_argument(
+        '--calc_fid',
+        type=str2bool,
+        default=False,
+        help='Calculate fidelity score')
+
     opt = parser.parse_args(args=args, namespace=namespace)
 
     return opt

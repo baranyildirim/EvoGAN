@@ -279,8 +279,9 @@ def validate(args, fixed_z, fid_stat, gen_net: nn.Module, writer_dict, clean_dir
     img_grid = make_grid(sample_imgs, nrow=5, normalize=True, scale_each=True)
 
     # get fid and inception score
-    fid_buffer_dir = os.path.join(args.path_helper['sample_path'], 'fid_buffer')
-    os.makedirs(fid_buffer_dir, exist_ok=True)
+    if (args.calc_fid):
+        fid_buffer_dir = os.path.join(args.path_helper['sample_path'], 'fid_buffer')
+        os.makedirs(fid_buffer_dir, exist_ok=True)
 
     eval_iter = args.num_eval_imgs // args.eval_batch_size
     img_list = list()
@@ -290,9 +291,10 @@ def validate(args, fixed_z, fid_stat, gen_net: nn.Module, writer_dict, clean_dir
         # Generate a batch of images
         gen_imgs = gen_net(z).mul_(127.5).add_(127.5).clamp_(0.0, 255.0).permute(0, 2, 3, 1).to('cpu',
                                                                                                 torch.uint8).numpy()
-        for img_idx, img in enumerate(gen_imgs):
-            file_name = os.path.join(fid_buffer_dir, f'iter{iter_idx}_b{img_idx}.png')
-            imsave(file_name, img)
+        if (args.calc_fid):
+            for img_idx, img in enumerate(gen_imgs):
+                file_name = os.path.join(fid_buffer_dir, f'iter{iter_idx}_b{img_idx}.png')
+                imsave(file_name, img)
         img_list.extend(list(gen_imgs))
 
     # get inception score
@@ -301,9 +303,10 @@ def validate(args, fixed_z, fid_stat, gen_net: nn.Module, writer_dict, clean_dir
     print(f"Inception score: {mean}")
 
     # get fid score
-    logger.info('=> calculate fid score')
-    fid_score = calculate_fid_given_paths([fid_buffer_dir, fid_stat], inception_path=None)
-    print(f"FID score: {fid_score}")
+    if (args.calc_fid):
+        logger.info('=> calculate fid score')
+        fid_score = calculate_fid_given_paths([fid_buffer_dir, fid_stat], inception_path=None)
+        print(f"FID score: {fid_score}")
 
     if clean_dir:
         os.system('rm -r {}'.format(fid_buffer_dir))
@@ -313,7 +316,8 @@ def validate(args, fixed_z, fid_stat, gen_net: nn.Module, writer_dict, clean_dir
     writer.add_image('sampled_images', img_grid, global_steps)
     writer.add_scalar('Inception_score/mean', mean, global_steps)
     writer.add_scalar('Inception_score/std', std, global_steps)
-    writer.add_scalar('FID_score', fid_score, global_steps)
+    if (args.calc_fid):
+        writer.add_scalar('FID_score', fid_score, global_steps)
 
     writer_dict['valid_global_steps'] = global_steps + 1
 
