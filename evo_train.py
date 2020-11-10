@@ -17,10 +17,13 @@ def generate_new_dna(n_dna:int, properties: DNAProperties) -> List[DNA]:
         dna_list.append(DNA.gen_random())
     return dna_list
 
-def output_dna(dna_list: List[DNA]) -> None:
-    """ Print serialized form of a list of DNAs """
-    for d in dna_list:
-        print(d.serialize())
+def output_dna(dna_list: List[DNA], scores:List[float]) -> None:
+    """ Print serialized form of a list of DNAs 
+        with their respective inception scores
+    """
+    assert(len(dna_list) == len(scores))
+    for idx, d in enumerate(dna_list):
+        print(f"{d.serialize()} : {scores[idx]}")
 
 def score_dna(dna: DNA) -> float:
     """ Create a GAN using the DNA,
@@ -101,12 +104,20 @@ def main():
     for epoch in range(n_epochs):
         properties = DNAProperties(mutation_probability=mut_prob)
         print(f"\n EPOCH: {epoch}\n")
-        rewards = scoring_step(dna_list)
-        dna_list = generation_step(dna_list, rewards, properties)
-        output_dna(dna_list)
+        inception_scores = scoring_step(dna_list)
+        output_dna(dna_list, inception_scores)
+
+        dna_list = generation_step(dna_list, inception_scores, properties)
 
         if epoch % 2 == 0:
             mut_prob /= 2
+
+    final_dna_list = dna_list
+    final_scores = scoring_step(final_dna_list)
+
+    print("\n FINAL: \n")
+    output_dna(final_dna_list, final_scores)
+    
 
 if __name__ == "__main__":
     main()
