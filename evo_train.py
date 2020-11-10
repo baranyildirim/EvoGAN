@@ -5,6 +5,8 @@ import sys
 
 import numpy as np
 import logging
+import torch
+import multiprocessing as mp
 
 from typing import List
 from evolution.dna import DNA
@@ -45,6 +47,9 @@ def output_dna(dna_list: List[DNA], scores:List[float]) -> None:
         print(f"{d.serialize()} : {scores[idx]}")
         evo_train_logger.info(f"{d.serialize()} : {scores[idx]}")
 
+
+
+
 def score_dna(dna: DNA) -> float:
     """ Create a GAN using the DNA,
         train the GAN and return the inception score.
@@ -55,10 +60,18 @@ def score_dna(dna: DNA) -> float:
 
 def scoring_step(dna_list: List[DNA]) -> List[float]:
     """ Score each DNA """
+
+    gpu_count = torch.cuda.device_count()
+    num_processes = gpu_count
+    pool = mp.Pool(num_processes)
+
     scores = []
-    for d in dna_list:
-        print(to_arch(d))
-        scores.append(score_dna(d))
+    for d_idx in range(0, len(dna_list), num_processes):
+        d_args = dna_list[d_idx * num_processes:d_idx * num_processes + num_processes]
+        curr_scores = [pool.apply(score_dna, args=d_elem) for d_elem in d_args]
+        scores.extend(curr_scores)
+
+    pool.close()  
     return scores
 
 def generation_step(dna_list: List[DNA], scores: List[List[float]], properties: DNAProperties) -> List[DNA]:
