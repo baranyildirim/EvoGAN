@@ -13,6 +13,8 @@ from gan_train import train_gan
 
 evo_train_logger = None
 def init_logger():
+    """ Initalize evo_train_logger """
+    
     evo_train_logger = logging.getLogger("evo_train")
     evo_train_logger.setLevel(logging.INFO)
     fh = logging.FileHandler('evo_train.log')

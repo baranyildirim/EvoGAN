@@ -5,7 +5,7 @@
 # @Version : 0.0
 import torch.nn as nn
 
-from models_search.building_blocks_search import Cell
+from .building_blocks_search import Cell
 
 
 class Generator(nn.Module):
