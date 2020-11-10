@@ -98,6 +98,8 @@ def train_derived(args):
 
     if args.calc_fid:
         best_fid = 1e4
+    else:
+        best_fid = None
     
     # set writer
     if args.load_path:
@@ -107,8 +109,7 @@ def train_derived(args):
         assert os.path.exists(checkpoint_file)
         checkpoint = torch.load(checkpoint_file)
         start_epoch = checkpoint['epoch']
-        if args.calc_fid:
-            best_fid = checkpoint['best_fid']
+        best_fid = checkpoint['best_fid']
         best_inception = checkpoint['best_inception']
         gen_net.load_state_dict(checkpoint['gen_state_dict'])
         dis_net.load_state_dict(checkpoint['dis_state_dict'])
