@@ -59,16 +59,19 @@ def score_dna(dna: Tuple[DNA]) -> float:
 def scoring_step(dna_list: List[DNA]) -> List[float]:
     """ Score each DNA """
 
+    # scores = []
+    # with ThreadPoolExecutor(max_workers=min(multiprocessing.cpu_count(), 4)) as executor:
+    #     futures = []            
+    #     for d in dna_list:
+    #         futures.append(executor.submit(score_dna, d))
+    #     futures = wait(futures, timeout=None, return_when=ALL_COMPLETED)[0]
+
+    #     for f in futures:
+    #         scores.append(f.result())
     scores = []
-    with ThreadPoolExecutor(max_workers=min(multiprocessing.cpu_count(), 4)) as executor:
-        futures = []            
-        for d in dna_list:
-            futures.append(executor.submit(score_dna, d))
-        futures = wait(futures, timeout=None, return_when=ALL_COMPLETED)[0]
-
-        for f in futures:
-            scores.append(f.result())
-
+    for d in dna_list:
+        print(to_arch(d))
+        scores.append(score_dna(d))
     return scores
 
 def generation_step(dna_list: List[DNA], scores: List[List[float]], properties: DNAProperties) -> List[DNA]:
