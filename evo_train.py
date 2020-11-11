@@ -65,7 +65,7 @@ def scoring_step(dna_list: List[DNA]) -> List[float]:
     with ThreadPoolExecutor(max_workers=gpu_count) as executor:
         futures = []
         for d in dna_list:
-            futures.append(executor.submit(score_dna, d_elem))
+            futures.append(executor.submit(score_dna, d))
         futures = wait(futures, timeout=None, return_when=ALL_COMPLETED)
         print(futures)
 
