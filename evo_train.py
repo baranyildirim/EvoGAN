@@ -118,8 +118,8 @@ def main():
     properties = DNAProperties(mutation_probability=mut_prob)
 
     # Initialize dna uniformly
-    dna_list = generate_new_dna(10, properties)
-    n_epochs = 20
+    dna_list = generate_new_dna(5, properties)
+    n_epochs = 10
 
     for epoch in range(n_epochs):
         properties = DNAProperties(mutation_probability=mut_prob)
@@ -130,8 +130,7 @@ def main():
 
         dna_list = generation_step(dna_list, inception_scores, properties)
 
-        if epoch % 2 == 0:
-            mut_prob /= 2
+        mut_prob /= 3
 
     final_dna_list = dna_list
     final_scores = scoring_step(final_dna_list)
