@@ -48,7 +48,7 @@ def output_dna(dna_list: List[DNA], scores:List[float]) -> None:
         evo_train_logger.info(f"{d.serialize()} : {scores[idx]}")
 
 
-def score_dna(dna: Tuple[DNA]) -> float:
+def score_dna(dna: DNA) -> float:
     """ Create a GAN using the DNA,
         train the GAN and return the inception score.
         Training uses train_derived from AutoGAN
@@ -131,8 +131,8 @@ def main():
     properties = DNAProperties(mutation_probability=mut_prob)
 
     # Initialize dna uniformly
-    dna_list = generate_new_dna(10, properties)
-    n_epochs = 20
+    dna_list = generate_new_dna(5, properties)
+    n_epochs = 10
 
     for epoch in range(n_epochs):
         properties = DNAProperties(mutation_probability=mut_prob)
@@ -143,8 +143,7 @@ def main():
 
         dna_list = generation_step(dna_list, inception_scores, properties)
 
-        if epoch % 2 == 0:
-            mut_prob /= 2
+        mut_prob /= 3
 
     final_dna_list = dna_list
     final_scores = scoring_step(final_dna_list)

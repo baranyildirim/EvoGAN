@@ -6,7 +6,7 @@ from multiprocessing import Process, Queue
 
 args = dict([
     ("-gen_bs", 128),
-    ("-dis_bs", 64),
+    ("-dis_bs", 128),
     ("--dataset", "cifar10"),
     ("--bottom_width", 4),
     ("--img_size", 32),
@@ -27,7 +27,8 @@ args = dict([
     ("--val_freq", 20),
     ("--exp_name", "derive"),
     ("--calc_fid", False),
-    ("--warnings_enabled", False)
+    ("--warnings_enabled", False),
+    ("--num_eval_imgs", 10000),
 ])
 
 def _train_gan(arch: List[int], max_epoch: int, q):

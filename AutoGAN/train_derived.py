@@ -151,6 +151,7 @@ def train_derived(args):
         if epoch and epoch % args.val_freq == 0 or epoch == int(args.max_epoch)-1:
             backup_param = copy_params(gen_net)
             load_params(gen_net, gen_avg_param)
+            print('hi')
             inception_score, fid_score = validate(args, fixed_z, fid_stat, gen_net, writer_dict)
             logger.info(f'Inception score: {inception_score}, FID score: {fid_score} || @ epoch {epoch}.')
             load_params(gen_net, backup_param)
