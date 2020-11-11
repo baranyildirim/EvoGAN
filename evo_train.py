@@ -48,7 +48,7 @@ def output_dna(dna_list: List[DNA], scores:List[float]) -> None:
         evo_train_logger.info(f"{d.serialize()} : {scores[idx]}")
 
 
-def score_dna(dna: Tuple[DNA]) -> float:
+def score_dna(dna: DNA) -> float:
     """ Create a GAN using the DNA,
         train the GAN and return the inception score.
         Training uses train_derived from AutoGAN
