@@ -41,7 +41,8 @@ def _train_gan(arch: List[int], max_epoch: int, q):
         args_list.append(str(item))
 
     result = train_derived(AutoGAN.cfg.parse_args(args=args_list))   
-    q.put()
+    q.put(result)
+    return
 
 def train_gan(arch: List[int], max_epoch: int) -> float:
     queue = Queue()
