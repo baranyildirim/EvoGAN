@@ -6,7 +6,7 @@ import sys
 import numpy as np
 import logging
 import torch
-import multiprocessing as mp
+from concurrent.futures import ThreadPoolExecutor, wait, ALL_COMPLETED
 
 from typing import List, Tuple
 from evolution.dna import DNA
@@ -53,7 +53,6 @@ def score_dna(dna: Tuple[DNA]) -> float:
         train the GAN and return the inception score.
         Training uses train_derived from AutoGAN
     """
-    dna = dna[0]
     reward = train_gan(to_arch(dna), 1)
     return reward
 
@@ -61,17 +60,15 @@ def scoring_step(dna_list: List[DNA]) -> List[float]:
     """ Score each DNA """
 
     gpu_count = torch.cuda.device_count()
-    num_processes = gpu_count
-    pool = mp.Pool(num_processes)
 
     scores = []
-    for d_idx in range(0, len(dna_list) // num_processes, num_processes):
-        d_args = dna_list[d_idx * num_processes:d_idx * num_processes + num_processes]
-        curr_scores = [pool.apply(score_dna, args=tuple([d_elem])) for d_elem in d_args]
-        pool.join()
-        scores.extend(curr_scores)
+    with ThreadPoolExecutor(max_workers=gpu_count) as executor:
+        futures = []
+        for d in dna_list:
+            futures.append(executor.submit(score_dna, d_elem))
+        futures = wait(futures, timeout=None, return_when=ALL_COMPLETED)
+        print(putures)
 
-    pool.close()  
     return scores
 
 def generation_step(dna_list: List[DNA], scores: List[List[float]], properties: DNAProperties) -> List[DNA]:
