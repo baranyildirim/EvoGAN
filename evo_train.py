@@ -3,10 +3,12 @@
 import os
 import sys
 
+import multiprocessing
 import numpy as np
 import logging
+from concurrent.futures import ThreadPoolExecutor, wait, ALL_COMPLETED
 
-from typing import List
+from typing import List, Tuple
 from evolution.dna import DNA
 from evolution.cell_dna import DNAProperties
 from gan_train import train_gan
@@ -45,7 +47,8 @@ def output_dna(dna_list: List[DNA], scores:List[float]) -> None:
         print(f"{d.serialize()} : {scores[idx]}")
         evo_train_logger.info(f"{d.serialize()} : {scores[idx]}")
 
-def score_dna(dna: DNA) -> float:
+
+def score_dna(dna: Tuple[DNA]) -> float:
     """ Create a GAN using the DNA,
         train the GAN and return the inception score.
         Training uses train_derived from AutoGAN
@@ -55,6 +58,16 @@ def score_dna(dna: DNA) -> float:
 
 def scoring_step(dna_list: List[DNA]) -> List[float]:
     """ Score each DNA """
+
+    # scores = []
+    # with ThreadPoolExecutor(max_workers=min(multiprocessing.cpu_count(), 4)) as executor:
+    #     futures = []            
+    #     for d in dna_list:
+    #         futures.append(executor.submit(score_dna, d))
+    #     futures = wait(futures, timeout=None, return_when=ALL_COMPLETED)[0]
+
+    #     for f in futures:
+    #         scores.append(f.result())
     scores = []
     for d in dna_list:
         print(to_arch(d))
