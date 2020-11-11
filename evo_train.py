@@ -67,7 +67,7 @@ def scoring_step(dna_list: List[DNA]) -> List[float]:
         for d in dna_list:
             futures.append(executor.submit(score_dna, d_elem))
         futures = wait(futures, timeout=None, return_when=ALL_COMPLETED)
-        print(putures)
+        print(futures)
 
     return scores
 
@@ -152,6 +152,5 @@ def main():
     
 
 if __name__ == "__main__":
-    mp.set_start_method('spawn')
     init_logger()
     main()
