@@ -117,7 +117,7 @@ def generate_evolution_matrix(dna_list: List[DNA], scores: List[int]) -> List[Li
     for i in range(len(dna_list[0].serialize())):
         p = [0 for _ in range(param_options[i])]
         for d_idx, d in enumerate(dna_list):
-            p[d.serialize()[i]] += scores[d_idx]
+            p[d.serialize()[i]] += np.exp(scores[d_idx])
         p_sum = sum(p)
         p = [x / p_sum for x in p]
         evo_matrix.append(p)
@@ -127,7 +127,7 @@ def generate_evolution_matrix(dna_list: List[DNA], scores: List[int]) -> List[Li
 
 def main():
     # Initialize mutation probability
-    mut_prob = 0.05
+    mut_prob = 0.10
     properties = DNAProperties(mutation_probability=mut_prob)
 
     # Initialize dna uniformly
