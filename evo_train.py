@@ -3,9 +3,9 @@
 import os
 import sys
 
+import multiprocessing
 import numpy as np
 import logging
-import torch
 from concurrent.futures import ThreadPoolExecutor, wait, ALL_COMPLETED
 
 from typing import List, Tuple
@@ -59,15 +59,15 @@ def score_dna(dna: Tuple[DNA]) -> float:
 def scoring_step(dna_list: List[DNA]) -> List[float]:
     """ Score each DNA """
 
-    gpu_count = torch.cuda.device_count()
-
     scores = []
-    with ThreadPoolExecutor(max_workers=gpu_count) as executor:
-        futures = []
+    with ThreadPoolExecutor(max_workers=min(multiprocessing.cpu_count(), 4)) as executor:
+        futures = []            
         for d in dna_list:
             futures.append(executor.submit(score_dna, d))
-        futures = wait(futures, timeout=None, return_when=ALL_COMPLETED)
-        print(futures)
+        futures = wait(futures, timeout=None, return_when=ALL_COMPLETED)[0]
+
+        for f in futures:
+            scores.append(f.result())
 
     return scores
 
