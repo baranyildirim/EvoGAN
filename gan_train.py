@@ -2,6 +2,7 @@ from typing import List
 from AutoGAN.train_derived import train_derived
 import AutoGAN.cfg
 
+from multiprocessing import Process, Queue
 
 args = dict([
     ("-gen_bs", 128),
@@ -29,7 +30,7 @@ args = dict([
     ("--warnings_enabled", False)
 ])
 
-def train_gan(arch: List[int], max_epoch: int) -> float:
+def _train_gan(arch: List[int], max_epoch: int, q):
     args["--max_epoch"] = max_epoch
     args_list = []
     for k, v in args.items():
@@ -38,4 +39,13 @@ def train_gan(arch: List[int], max_epoch: int) -> float:
     for item in arch:
         args_list.append(str(item))
 
-    return train_derived(AutoGAN.cfg.parse_args(args=args_list))   
+    result = train_derived(AutoGAN.cfg.parse_args(args=args_list))   
+    q.put()
+
+def train_gan(arch: List[int], max_epoch: int) -> float:
+    queue = Queue()
+    p = Process(target=_train_gan, args=(arch, max_epoch, queue))
+    p.start()
+    p.join()
+    result = queue.get()
+    return result
